@@ -1,3 +1,7 @@
+# Grade report
+import numpy as np
+import math
+
 students = {
 	"Alice": [95, 87, 92],
 	"Bob": [78, 82, 85],
@@ -27,11 +31,42 @@ def add_grade(name, grade):
     students[name].append(grade)
     return True
 
+def get_all_grades(students_dict):
+    all_grades = []
+
+    for grades in students_dict.values():
+        all_grades.extend(grades)
+
+    return all_grades
+
+def get_median(grades_list):
+    if not grades_list:
+        return 0
+
+    sorted_grades = sorted(grades_list)
+    middle_index = len(sorted_grades) // 2
+
+    if len(sorted_grades) % 2 == 1:
+        return sorted_grades[middle_index]
+
+    return (sorted_grades[middle_index - 1] + sorted_grades[middle_index]) / 2
+
+def get_std_dev(grades_list):
+    if not grades_list:
+        return 0
+
+    avg = get_average(grades_list)
+    variance = sum((grade - avg) ** 2 for grade in grades_list) / len(grades_list)
+
+    return math.sqrt(variance)
+
 def get_class_average(students_dict):
+    all_grades = get_all_grades(students_dict)
     averages = [get_average(grades) for grades in students_dict.values() if grades]
     return sum(averages) / len(averages) if averages else 0
 
 def display_report(students_dict):
+    all_grades = [grade for grades in students_dict.values() for grade in grades]
     print("\nSTUDENT GRADE REPORT")
     print("-" * 40)
     for name, grades in students_dict.items():
@@ -41,6 +76,8 @@ def display_report(students_dict):
         print(f"{name:<12} Grades: {str(grades):<20} Avg: {avg:>6.2f}  High: {hi:>3}  Low: {lo:>3}")
     print("-" * 40)
     print(f"Class Average: {get_class_average(students_dict):.2f}")
+    print(f"Median: {get_median(all_grades):.2f}")
+    print(f"Standard Deviation: {get_std_dev(all_grades):.2f}")
 
 def main():
     while True:
